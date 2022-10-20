@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS building;
 
 CREATE TABLE IF NOT EXISTS building (
 building_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+building_code TEXT NOT NULL UNIQUE,
 floors_num INTEGER NOT NULL);
 
 
@@ -29,6 +30,7 @@ CREATE TABLE IF NOT EXISTS washing_machine (
 washing_machine_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 manufacturer_id INTEGER NOT NULL,
 building_id INTEGER NOT NULL,
+floor_num INTEGER NOT NULL,
 model_name TEXT NOT NULL,
 purchase_date DATETIME NOT NULL,
 service_time INTEGER NOT NULL,
