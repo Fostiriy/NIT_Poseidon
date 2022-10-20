@@ -197,7 +197,3 @@ INSERT
 INTO record_range (record_time)
 SELECT time('00:00', '+' || value || ' minutes')
 FROM generate_series;
-
-
-INSERT INTO laundry_registry (washing_machine_id, clientele_id, record_date, record_time)
-VALUES (1, 1, '2022-10-13', '08:30');
