@@ -3,7 +3,7 @@
 import sqlite3
 
 # создаем базу данных и устанавливаем соединение с ней
-con = sqlite3.connect("poseidon.sqlite")
+con = sqlite3.connect("../poseidon.sqlite")
 
 # создание таблиц
 # открываем файл с дампом базой данных
