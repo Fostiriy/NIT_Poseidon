@@ -190,10 +190,25 @@ VALUES (18, 79146466228, 'Николаева Анна Алексеевна', 'Tn
 
 WITH RECURSIVE generate_series(value) AS (SELECT 0
                                           UNION ALL
-                                          SELECT value + 30
+                                          SELECT value + 60
                                           FROM generate_series
-                                          WHERE value + 30 < 24 * 60)
+                                          WHERE value + 60 < 24 * 60)
 INSERT
 INTO record_range (record_time)
-SELECT time('00:00', '+' || value || ' minutes')
+SELECT strftime('%H:%M', time('00:00', '+' || value || ' minutes'))
 FROM generate_series;
+
+-- Заполнение журнала записи
+WITH RECURSIVE generate_series(value) AS (SELECT 0
+                                          UNION ALL
+                                          SELECT value + 1
+                                          FROM generate_series
+                                          WHERE value + 1 <= 14)
+INSERT
+INTO laundry_registry (washing_machine_id, record_date, record_time)
+SELECT washing_machine_id,
+       date(julianday('now', 'weekday 0', '-6 days'), '+' || value || ' days'),
+       record_time
+FROM washing_machine,
+     generate_series,
+     record_range;

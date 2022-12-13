@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+{% macro render_record_card(floor_num, machine_num, machine_records, records) %}
+    <div class="record_card">
+        <p>Этаж {{ floor_num }}</p>
+        <p>Машинка №{{ machine_num }}</p>
+        <table>
+            <thead>
+            <tr>
+                <th>Время</th>
+                <th>ПН</th>
+                <th>ВТ</th>
+                <th>СР</th>
+                <th>ЧТ</th>
+                <th>ПТ</th>
+                <th>СБ</th>
+                <th>ВС</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for time, time_records in machine_records.items() %}
+                <tr>
+                    <td>{{ time }}</td>
+                    {% for time_record_index in time_records %}
+                        <td>
+                            {% set time_record = records.iloc[time_record_index] %}
+                            <input type="checkbox" name="{{ time_record.laundry_registry_id }}"
+                                    {% if time_record.is_free == 0 %}
+                                   disabled
+                                    {% endif %}
+                            >
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}

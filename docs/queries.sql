@@ -51,7 +51,7 @@ HAVING count(clientele_id) = max_records_num;
 -- ЗАПРОСЫ КОРРЕКТИРОВКИ --
 
 -- 1. Заполнение журнала записи
-WITH RECURSIVE generate_series(value) AS (SELECT 1
+WITH RECURSIVE generate_series(value) AS (SELECT 0
                                           UNION ALL
                                           SELECT value + 1
                                           FROM generate_series
@@ -59,7 +59,7 @@ WITH RECURSIVE generate_series(value) AS (SELECT 1
 INSERT
 INTO laundry_registry (washing_machine_id, record_date, record_time)
 SELECT washing_machine_id,
-       date(julianday('now'), '+' || value || ' days'),
+       date(julianday('now', 'weekday 0', '-6 days'), '+' || value || ' days'),
        record_time
 FROM washing_machine,
      generate_series,
