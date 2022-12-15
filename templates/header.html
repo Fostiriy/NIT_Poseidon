@@ -1,8 +1,9 @@
 <header>
     <nav>
-        <ul>
-            <li><a href="{{ url_for('record') }}">Главная</a></li>
-            <li><a href="{{ url_for('profile') }}">Мои записи</a></li>
-        </ul>
+        <a href="{{ url_for('index') }}">Записаться на стирку</a>
+        <a href="{{ url_for('profile') }}">
+            <span>Корпус {{ building_code }}</span>
+            <span>{{ client_name }}</span>
+        </a>
     </nav>
 </header>

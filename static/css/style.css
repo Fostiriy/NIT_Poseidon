@@ -1,3 +1,9 @@
 .record_tables {
     display: flex;
 }
+
+.record_button {
+    position: fixed;
+    bottom: 5vh;
+    right: 10vw;
+}

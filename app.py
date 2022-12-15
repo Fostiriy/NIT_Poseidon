@@ -8,5 +8,5 @@ app = Flask(__name__)
 app.secret_key = b'09ufa#dfu&3a\n\xec]/'
 
 import controllers.index
-import controllers.record
+import controllers.index
 import controllers.profile
