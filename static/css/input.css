@@ -1,89 +1,31 @@
-* {
-    margin: 0;
-    padding: 0;
-    font-family: "Lato", sans-serif;
-}
-
-h1 {
-    font-size: 24px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-table {
-    border-collapse: collapse;
-}
-
-td, th {
-    font-size: 14px;
-    font-weight: normal;
-}
-
-.week_date {
-    font-size: 12px;
-}
-
-.minutes {
-    font-size: 10px;
-}
-
-
-.record_card {
-    text-align: center;
-}
-
-.floor {
-    font-weight: bold;
-}
-
-.record_tables {
-    display: flex;
-    margin: 0 auto;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 50px;
-    width: fit-content;
-    max-width: 100%;
-}
-
-.record_button {
-    display: block;
-    margin: 20px auto;
-    font-size: 14px;
-    border: 0;
-    border-radius: 8px;
-    background: #4965e0;
-    color: #eaeaea;
-    padding: 12px 24px;
-    cursor: pointer;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 .record_cell_input {
+    -webkit-appearance: none;
+    appearance: none;
     position: absolute;
-    z-index: -1;
-    opacity: 0;
 }
 
 .record_cell {
     user-select: none;
+    display: flex;
+    justify-content: center;
 }
 
 .record_cell::before {
     content: '';
     display: block;
-    width: 30px;
-    height: 20px;
+    width: 2rem;
+    height: 1rem;
     background: #82cfff;
-    margin: .1rem;
+    margin: 0 .1rem;
     cursor: pointer;
 }
 
 .record_cell_input:checked + .record_cell::before {
     background-color: #4965e0;
-}
-
-.record_cell_input.booked + .record_cell::before {
-    background-color: #41bb3c;
 }
 
 /* стили при наведении курсора на checkbox */
@@ -110,5 +52,10 @@ td, th {
 .record_cell_input.disabled:disabled + .record_cell::before {
     background-color: #e9ecef;
     cursor: default;
+}
+
+.record_cell_input.booked + label > .record_cell::before {
+    background-color: #41bb3c !important;
+    cursor: pointer;
 }
 

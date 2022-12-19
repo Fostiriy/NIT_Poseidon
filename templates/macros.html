@@ -1,22 +1,50 @@
 <!DOCTYPE html>
 
+{% macro render_record_block(machine_records, client_id, week_days, records) %}
+    <div class="carousel carousel-center">
+        {% for machine_floor, values in machine_records.items() %}
+            {{ render_record_card(machine_floor[0],
+                machine_floor[1],
+                client_id,
+                week_days,
+                values,
+                records) }}
+        {% endfor %}
+    </div>
+
+    <script>
+        function checkLimit() {
+            if (document.querySelectorAll('.record_cell_input:checked').length >= 3) {
+                let recordCells = document.querySelectorAll('.record_cell_input:not(:checked)');
+                recordCells.forEach(recordCell => recordCell.setAttribute('disabled', ''));
+            } else {
+                let recordCellsFree = document.querySelectorAll('.record_cell_input.free');
+                recordCellsFree.forEach(recordCell => recordCell.removeAttribute('disabled'))
+            }
+        }
+
+        document.querySelectorAll('.record_cell_input').forEach(recordCell => recordCell.addEventListener('change', checkLimit))
+        checkLimit()
+    </script>
+{% endmacro %}
+
 {% macro render_record_card(floor_num, machine_num, client_id, week_days, machine_records, records) %}
-    <div class="record_card">
-        <table>
+    <div class="carousel-item">
+        <table class="table-fixed">
             <thead>
             <tr>
                 <th></th>
-                <th colspan="7"><p class="floor">Этаж {{ floor_num }}</p></th>
+                <th colspan="7" class="text-sm">Этаж {{ floor_num }}</th>
             </tr>
             <tr>
                 <th></th>
-                <th colspan="7"><p class="washing_machine">Машинка {{ machine_num }}</p></th>
+                <th colspan="7" class="text-sm">Машинка {{ machine_num }}</th>
             </tr>
             <tr>
                 {% set days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'] %}
                 <th></th>
                 {% for i in range(7) %}
-                    <th>
+                    <th class="text-xs">
                         <p class="week_day">{{ days[i] }}</p>
                         <p class="week_date">{{ week_days[i].strftime('%d.%m') }}</p>
                     </th>
@@ -26,7 +54,7 @@
             <tbody>
             {% for time, time_records in machine_records.items() %}
                 <tr>
-                    <td>
+                    <td class="text-xs">
                         <span class="hour">{{ time[0] + time[1] }}</span><sup
                             class="minutes">{{ time[3] + time[4] }}</sup>
                     </td>
@@ -48,12 +76,18 @@
                                     {% endif %}"
                                     {% if time_record.clientele_id == client_id %}
                                    checked
-                                    {% elif time_record.is_free == 0 %}
+                                    {% endif %}
+                                    {% if time_record.is_free == 0 %}
                                    disabled
                                     {% endif %}
                             >
-                            <label for="{{ time_record.laundry_registry_id }}" class="record_cell">
-                            </label>
+                            {% if time_record.clientele_id == client_id %}
+                                <a href="#delete-modal">
+                                    <label for="{{ time_record.laundry_registry_id }}" class="record_cell"></label>
+                                </a>
+                            {% else %}
+                                <label for="{{ time_record.laundry_registry_id }}" class="record_cell"></label>
+                            {% endif %}
                         </td>
                     {% endfor %}
                 </tr>
@@ -61,40 +95,4 @@
             </tbody>
         </table>
     </div>
-{% endmacro %}
-
-{% macro render_record_block(machine_records, client_id, week_days, records) %}
-    {% for machine_floor, values in machine_records.items() %}
-        {{ render_record_card(machine_floor[0],
-                machine_floor[1],
-                client_id,
-                week_days,
-                values,
-                records) }}
-    {% endfor %}
-
-    <script>
-        function checkLimit() {
-            if (document.querySelectorAll('.record_cell_input:checked').length >= 3) {
-                let recordCells = document.querySelectorAll('.record_cell_input:not(:checked)');
-                recordCells.forEach(recordCell => recordCell.setAttribute('disabled', ''));
-            } else {
-                let recordCellsFree = document.querySelectorAll('.record_cell_input.free');
-                recordCellsFree.forEach(recordCell => recordCell.removeAttribute('disabled'))
-            }
-        }
-
-        function cancelRecord() {
-            this.checked = true;
-            let is_agree = confirm('Отменить запись?')
-            if (is_agree) {
-                this.name = 'record_cell_to_delete'
-                document.querySelector('#record_form').submit()
-            }
-        }
-
-        document.querySelectorAll('.record_cell_input').forEach(recordCell => recordCell.addEventListener('change', checkLimit))
-        document.querySelectorAll('.record_cell_input:checked').forEach(recordCell => recordCell.addEventListener('change', cancelRecord))
-        checkLimit()
-    </script>
 {% endmacro %}

@@ -1,9 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="./static/css/style.css">
+    {% import "macros.html" as macros %}
+</head>
+{% block before_body %}
+{% endblock %}
+<body>
 <header>
-    <nav>
-        <a href="{{ url_for('index') }}">Записаться на стирку</a>
-        <a href="{{ url_for('profile') }}">
-            <span>Корпус {{ building_code }}</span>
-            <span>{{ client_name }}</span>
-        </a>
+    {% set client_name_parts = client_name.split() %}
+    <nav class="navbar px-10 py-5">
+        <div class="navbar-start">
+            <a href="{{ url_for('index') }}" class="btn btn-outline btn-primary">СТИРАЛКА</a>
+        </div>
+        <div class="navbar-center">
+            <div class="font-bold">
+                {% block header_title %}
+                {% endblock %}
+            </div>
+        </div>
+        <div class="navbar-end flex gap-2">
+            {% if client_name == '' %}
+                <label for="login-modal" class="btn btn-ghost btn-sm normal-case">Войти</label>
+            {% else %}
+                <a href="{{ url_for('profile') }}" class="btn btn-ghost normal-case">
+                    <div class="avatar placeholder">
+                        <div class="bg-neutral-focus text-neutral-content rounded-full w-8 ">
+                            <span>{{ client_name_parts[1][0] }}</span>
+                        </div>
+                    </div>
+                    <span class="ml-1">{{ client_name_parts[0] }} {{ client_name_parts[1][0] }}. {{ client_name_parts[2][0] }}.</span>
+                </a>
+                <form action="{{ url_for('auth') }}" method="post">
+                    <button name="logout" value="logout" type="submit"
+                            class="btn btn-outline btn-error normal-case btn-sm">
+                        Выйти
+                    </button>
+                </form>
+            {% endif %}
+        </div>
     </nav>
 </header>
+{% block body %}
+{% endblock %}
+</body>
+</html>

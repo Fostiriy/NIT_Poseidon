@@ -69,3 +69,19 @@ def get_building_id(conn, client_id):
                 FROM clientele
                 WHERE clientele_id = :client_id
             ''', conn, params={'client_id': client_id}).values[0][0])
+
+
+def get_client_id(conn, phone_num):
+    return pandas.read_sql('''
+                SELECT clientele_id
+                FROM clientele
+                WHERE phone_num = :phone_num
+            ''', conn, params={'phone_num': phone_num}).values[0][0]
+
+
+def get_password(conn, client_id):
+    return pandas.read_sql('''
+                SELECT password
+                FROM clientele
+                WHERE clientele_id = :client_id
+            ''', conn, params={'client_id': client_id}).values[0][0]
