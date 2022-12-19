@@ -2,17 +2,23 @@
 
 {% macro render_record_card(floor_num, machine_num, client_id, week_days, machine_records, records) %}
     <div class="record_card">
-        <p>Этаж {{ floor_num }}</p>
-        <p>Машинка {{ machine_num }}</p>
         <table>
             <thead>
             <tr>
+                <th></th>
+                <th colspan="7"><p class="floor">Этаж {{ floor_num }}</p></th>
+            </tr>
+            <tr>
+                <th></th>
+                <th colspan="7"><p class="washing_machine">Машинка {{ machine_num }}</p></th>
+            </tr>
+            <tr>
                 {% set days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'] %}
-                <th>Время</th>
+                <th></th>
                 {% for i in range(7) %}
                     <th>
-                        {{ days[i] }}<br>
-                        {{ week_days[i].strftime('%d.%m') }}
+                        <p class="week_day">{{ days[i] }}</p>
+                        <p class="week_date">{{ week_days[i].strftime('%d.%m') }}</p>
                     </th>
                 {% endfor %}
             </tr>
@@ -20,27 +26,33 @@
             <tbody>
             {% for time, time_records in machine_records.items() %}
                 <tr>
-                    <td>{{ time }}</td>
+                    <td>
+                        <span class="hour">{{ time[0] + time[1] }}</span><sup
+                            class="minutes">{{ time[3] + time[4] }}</sup>
+                    </td>
                     {% for time_record_index in time_records %}
                         <td>
                             {% set time_record = records.iloc[time_record_index] %}
-                            <label>
-                                <input type="checkbox"
-                                       value="{{ time_record.laundry_registry_id }}"
-                                       name="record_cell"
-                                       class="record_cell
-                                        {% if time_record.is_free == 1 %}
-                                       free
-                                        {% else %}
-                                       disabled
-                                        {% endif %}"
-
-                                        {% if time_record.clientele_id == client_id %}
-                                       checked
-                                        {% elif time_record.is_free == 0 %}
-                                       disabled
-                                        {% endif %}
-                                >
+                            <input type="checkbox"
+                                   value="{{ time_record.laundry_registry_id }}"
+                                   id="{{ time_record.laundry_registry_id }}"
+                                   name="record_cell"
+                                   class="record_cell_input
+                                    {% if time_record.is_free == 1 %}
+                                   free
+                                    {% else %}
+                                   disabled
+                                    {% endif %}
+                                    {% if time_record.clientele_id == client_id %}
+                                   booked
+                                    {% endif %}"
+                                    {% if time_record.clientele_id == client_id %}
+                                   checked
+                                    {% elif time_record.is_free == 0 %}
+                                   disabled
+                                    {% endif %}
+                            >
+                            <label for="{{ time_record.laundry_registry_id }}" class="record_cell">
                             </label>
                         </td>
                     {% endfor %}
@@ -63,11 +75,11 @@
 
     <script>
         function checkLimit() {
-            if (document.querySelectorAll('.record_cell:checked').length === 3) {
-                let recordCells = document.querySelectorAll('.record_cell:not(:checked)');
+            if (document.querySelectorAll('.record_cell_input:checked').length >= 3) {
+                let recordCells = document.querySelectorAll('.record_cell_input:not(:checked)');
                 recordCells.forEach(recordCell => recordCell.setAttribute('disabled', ''));
             } else {
-                let recordCellsFree = document.querySelectorAll('.record_cell.free');
+                let recordCellsFree = document.querySelectorAll('.record_cell_input.free');
                 recordCellsFree.forEach(recordCell => recordCell.removeAttribute('disabled'))
             }
         }
@@ -81,8 +93,8 @@
             }
         }
 
-        document.querySelectorAll('.record_cell').forEach(recordCell => recordCell.addEventListener('change', checkLimit))
-        document.querySelectorAll('.record_cell:checked').forEach(recordCell => recordCell.addEventListener('click', cancelRecord))
+        document.querySelectorAll('.record_cell_input').forEach(recordCell => recordCell.addEventListener('change', checkLimit))
+        document.querySelectorAll('.record_cell_input:checked').forEach(recordCell => recordCell.addEventListener('change', cancelRecord))
         checkLimit()
     </script>
 {% endmacro %}

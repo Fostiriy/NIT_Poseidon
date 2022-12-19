@@ -33,13 +33,11 @@ def index():
     today = timezone.localize(today)
     week_days = get_week_dates(today, 1, 7)
 
-    session['client_id'] = 1
+    session['client_id'] = 3
     building_id = get_building_id(conn, session['client_id'])
     session['building_code'] = get_building_code(conn, building_id)
 
     client_name = get_client_name(conn, session['client_id'])
-    client_name_parts = client_name.split()
-    client_name = f'{client_name_parts[0]} {client_name_parts[1][0]}. {client_name_parts[2][0]}.'
     session['client_name'] = client_name
 
     if request.values.get('record_cell_to_delete'):

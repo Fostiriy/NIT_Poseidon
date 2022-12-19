@@ -12,11 +12,11 @@
 {% endwith %}
 <main>
     <h1>Запись на стирку {{ week_days[0].strftime('%d.%m') }}–{{ week_days[6].strftime('%d.%m') }}</h1>
-    <form action="" method="post" id="record_form">
+    <form action="" method="post" id="record_form" class="record_form">
         <div class="record_tables">
             {{ macros.render_record_block(machine_records, client_id, week_days, records) }}
         </div>
-        <input type="submit" class="record_button" value="Записаться">
+        <input type="submit" class="record_button" value="Записаться на стирку">
     </form>
 </main>
 
