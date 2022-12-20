@@ -19,28 +19,29 @@
     display: block;
     width: 2rem;
     height: 1rem;
-    background: #82cfff;
+    background: #b1e0ff;
+    border-radius: 2px;
     margin: 0 .1rem;
     cursor: pointer;
 }
 
 .record_cell_input:checked + .record_cell::before {
-    background-color: #4965e0;
+    background-color: hsl(var(--p));
 }
 
 /* стили при наведении курсора на checkbox */
 .record_cell_input:not(:disabled):not(:checked) + .record_cell:hover::before {
-    box-shadow: 0 0 0 .1rem #4965e0;
+    box-shadow: 0 0 0 .1rem hsl(var(--p));
 }
 
 /* стили для чекбокса, находящегося в фокусе */
 .record_cell_input:focus + .record_cell::before {
-    box-shadow: 0 0 0 .1rem #4965e0;
+    box-shadow: 0 0 0 .1rem hsl(var(--p));
 }
 
 /* стили для чекбокса, находящегося в фокусе и не находящегося в состоянии checked */
 .record_cell_input:focus:not(:checked) + .record_cell::before {
-    border-color: #4965e0;
+    border-color: hsl(var(--p));
 }
 
 /* стили для чекбокса, находящегося в состоянии disabled */
@@ -49,13 +50,19 @@
     cursor: default;
 }
 
+.record_cell_input.off:disabled + .record_cell::before,
 .record_cell_input.disabled:disabled + .record_cell::before {
-    background-color: #e9ecef;
+    background-color: hsl(var(--b2));
     cursor: default;
 }
 
-.record_cell_input.booked + label > .record_cell::before {
-    background-color: #41bb3c !important;
-    cursor: pointer;
+.record_cell_input.booked + .record_cell::before {
+    background-color: hsl(var(--su)) !important;
+    cursor: pointer !important;
+}
+
+.record_cell_input.booked.off + .record_cell::before {
+    background-color: hsl(var(--er)) !important;
+    cursor: default !important;
 }
 

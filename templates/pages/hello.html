@@ -1,0 +1,71 @@
+{% extends "pages/base.html" %}
+{% block title %}
+    Запись на стирку
+{% endblock %}
+{% block before_body %}
+    <input type="checkbox" id="login-modal" class="modal-toggle"
+            {% if with_modal %} checked {% endif %}/>
+    <div class="modal">
+        <div class="modal-box w-3/12 relative">
+            <label for="login-modal" class="btn btn-ghost btn-sm btn-square absolute right-2 top-2">✕</label>
+            <h3 class="text-lg font-bold text-center mb-2">Вход</h3>
+            {% if phone_error or password_error %}
+                <div class="alert alert-error">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>{% if phone_error %}Неверный номер телефона. Он должен начинаться на «7»{% endif %}</span>
+                        <span>{% if password_error %}Неверный пароль{% endif %}</span>
+                    </div>
+                </div>
+            {% endif %}
+            <form action="{{ url_for('auth') }}" method="post"
+                  onsubmit="return validPhone()">
+                <div class="form-control mb-1">
+                    <label class="label">
+                        <span class="label-text">Телефон</span>
+                    </label>
+                    <input id="phone" name="phone" type="tel" placeholder="79561689834" value="{{ phone }}"
+                           class="input input-bordered max-w-xs {% if phone_error %}input-error{% endif %}"/>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Пароль</span>
+                    </label>
+                    <input id="password" name="password" type="password" placeholder="·········"
+                           class="input input-bordered max-w-xs {% if password_error %}input-error{% endif %}"/>
+                </div>
+                <button id="login-btn" class="btn btn-block btn-primary mt-5 mx-auto"
+                        onclick="validPhone()">
+                    Войти в Стиралку
+                </button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function validPhone() {
+            let regex = /\d{11}/;
+            let phone = document.getElementById('phone').value;
+            let valid = regex.test(phone);
+            let phoneInput = document.getElementById('phone');
+            if (valid) {
+                phoneInput.classList.add('input-success');
+            } else {
+                phoneInput.classList.add('input-error');
+            }
+            return valid;
+        }
+    </script>
+{% endblock %}crash_registry
+{% block body %}
+    <main class="h-4/6 flex items-center justify-center">
+        <div>
+            <p class="text-primary text-7xl mb-2">СТИРАЛКА</p>
+            <h2 class="text-3xl">Сервис для записи на стирку</h2>
+            <label for="login-modal" class="btn btn-primary btn-wide mt-8">Записаться на стирку</label>
+        </div>
+    </main>
+{% endblock %}

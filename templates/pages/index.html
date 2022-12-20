@@ -1,0 +1,28 @@
+{% extends "pages/base.html" %}
+{% set header_title = 'Запись на стирку '
++ week_days[0].strftime('%d.%m') + '–' + week_days[6].strftime('%d.%m')
++ ' | Корпус ' + building_code %}
+{% block title %}
+    Запись на стирку
+{% endblock %}
+{% block before_body %}
+    <div class="modal" id="delete-modal">
+        <div class="modal-box w-2/12">
+            <a href="#" class="btn btn-ghost btn-sm btn-square absolute right-2 top-2">✕</a>
+            <h3 class="font-bold text-lg text-center">Удалить запись?</h3>
+            <form action="{{ url_for('index') }}" class="modal-action flex justify-center">
+                <button class="btn btn-outline btn-error normal-case" name="record_cell_to_delete">Удалить</button>
+                <a href="#" class="btn btn-outline normal-case">Оставить</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block body %}
+    <form class="container flex flex-col mx-auto items-center gap-8" action="" method="post"
+          id="record_form">
+        {{ macros.render_record_block(machine_records, client_id, week_days, records) }}
+        <input class="btn btn-primary btn-wide"
+               type="submit"
+               value="Записаться на стирку">
+    </form>
+{% endblock %}

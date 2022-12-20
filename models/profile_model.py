@@ -8,7 +8,7 @@ def get_profile_records(conn, client_id, today):
                record_time,
                floor_num,
                washing_machine_id,
-               iif(:today <= record_date, 1, 0) state
+               iif(crash_status = 1, -1, iif(:today <= record_date, 1, 0)) state
         FROM washing_machine
                  JOIN laundry_registry USING (washing_machine_id)
         WHERE clientele_id = :client_id

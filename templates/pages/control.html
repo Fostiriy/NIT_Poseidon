@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель управления «Стиралки»</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<div class="modal" id="disable-modal">
+    <div class="modal-box w-3/12">
+        <a href="#" class="btn btn-ghost btn-sm btn-square absolute right-2 top-2">✕</a>
+        <h3 class="font-bold text-lg text-center">Отключить машинку?</h3>
+        <form action="{{ url_for('control') }}" class="modal-action flex justify-center">
+            <button class="btn btn-outline btn-error normal-case" name="disable_machine">Отключить</button>
+            <a href="#" class="btn btn-outline normal-case">Оставить</a>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="activate-modal">
+    <div class="modal-box w-3/12">
+        <a href="#" class="btn btn-ghost btn-sm btn-square absolute right-2 top-2">✕</a>
+        <h3 class="font-bold text-lg text-center">Активировать машинку?</h3>
+        <form action="{{ url_for('control') }}" class="modal-action flex justify-center">
+            <button class="btn btn-outline btn-success normal-case" name="activate_machine">Активировать</button>
+            <a href="#" class="btn btn-outline normal-case">Оставить</a>
+        </form>
+    </div>
+</div>
+
+<body>
+<h1 class="text-2xl font-bold mb-5">Панель управления «Стиралки»</h1>
+{% if access == 0 %}
+    <form action="{{ url_for('control') }}" method="post">
+        <div class="form-control">
+            <label class="label">
+                <span class="label-text">Пароль</span>
+            </label>
+            <input id="password" name="password" type="password" placeholder="·········"
+                   class="input input-bordered max-w-xs"/>
+        </div>
+        <button id="login-btn" class="btn btn-primary mt-5">
+            Открыть панель управления
+        </button>
+    </form>
+{% else %}
+    {% set columns = {'washing_machine_id':'Машинка', 'building_code':'Корпус', 'floor_num':'Этаж', 'state':'Состояние', 'model':'Модель', 'service_end_date':'Конец гарантии'} %}
+    <table class="table">
+        <thead>
+        <tr>
+            {% for name in columns %}
+                <th>{{ columns[name] }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for i, record in washing_machine_info.iterrows() %}
+            <tr>
+                {% for name in columns %}
+                    <td>
+                        {% set value = record[name] %}
+                        {% if name == 'state' %}
+                            {% if value == 1 %}
+                                <span class="text-success">Работает</span>
+                                <a href="#disable-modal" class="btn btn-outline normal-case btn-xs"
+                                   id="{{ record.washing_machine_id }}"
+                                   onclick="document.querySelector('#disable-modal button').value = this.id">
+                                    Отключить
+                                </a>
+                            {% else %}
+                                <span class="text-error">Отключена</span>
+                                <a href="#activate-modal" class="btn btn-outline normal-case btn-xs"
+                                   id="{{ record.washing_machine_id }}"
+                                   onclick="document.querySelector('#activate-modal button').value = this.id">
+                                    Активировать
+                                </a>
+                            {% endif %}
+                        {% elif name == 'service_end_date' %}
+                            <span{% if record.on_service == 0 %} class="text-error" {% endif %}>
+                            {{ record[name] }}
+                        </span>
+                        {% else %}
+                            {{ record[name] }}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+</body>
+</html>

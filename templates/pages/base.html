@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="../../static/css/style.css">
+    {% import "macros.html" as macros %}
+</head>
+{% block before_body %}
+{% endblock %}
+<body class="mx-20 h-screen">
+{% include "components/header.html" %}
+{% block body %}
+{% endblock %}
+</body>
+</html>

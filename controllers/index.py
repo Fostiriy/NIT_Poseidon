@@ -28,17 +28,22 @@ def get_week_dates(base_date, start_day, end_day=None):
 def index():
     conn = get_db_connection()
 
-    today = datetime.now()
-    timezone = pytz.timezone('Asia/Vladivostok')
-    today = timezone.localize(today)
-    week_days = get_week_dates(today, 1, 7)
+    if is_laundry_registry_empty(conn):
+        fill_laundry_registry(conn)
 
-    records = []
-    machine_records = []
-
-    if session['client_id'] == -1:
-        print('client is not chosen')
+    if 'client_id' not in session:
+        html = render_template('pages/hello.html',
+                               client_name='',
+                               with_modal=False,
+                               phone='',
+                               phone_error=False,
+                               password_error=False)
     else:
+        today = datetime.now()
+        timezone = pytz.timezone('Asia/Vladivostok')
+        today = timezone.localize(today)
+        week_days = get_week_dates(today, 1, 7)
+
         building_id = get_building_id(conn, session['client_id'])
         session['building_code'] = get_building_code(conn, building_id)
 
@@ -66,34 +71,12 @@ def index():
                                               .groupby('record_time')
                                               .groups)
 
-    # выводим форму
-    html = render_template('index.html',
-                           building_code=session['building_code'],
-                           week_days=week_days,
-                           client_id=session['client_id'],
-                           client_name=session['client_name'],
-                           records=records,
-                           machine_records=machine_records,
-                           )
+        html = render_template('pages/index.html',
+                               building_code=session['building_code'],
+                               week_days=week_days,
+                               client_id=session['client_id'],
+                               client_name=session['client_name'],
+                               records=records,
+                               machine_records=machine_records,
+                               )
     return html
-
-
-@app.route('/auth', methods=['GET', 'POST'])
-def auth():
-    conn = get_db_connection()
-
-    if request.values.get('logout'):
-        session['client_id'] = -1
-        session['building_code'] = 0
-        session['client_name'] = ''
-
-    if request.values.get('phone'):
-        phone = request.values.get('phone')
-        password = request.values.get('password')
-
-        if phone != '':
-            client_id = int(get_client_id(conn, phone))
-            correct_password = get_password(conn, client_id)
-            if password == correct_password:
-                session['client_id'] = client_id
-    return index()

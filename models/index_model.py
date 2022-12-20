@@ -17,9 +17,7 @@ def get_records(conn, building_id, today, start_date, finish_date):
                record_time,
                record_date,
                clientele_id,
-               iif(clientele_id IS NULL
-                       AND crash_status = 0
-                       AND record_date >= :today, 1, 0) is_free
+               iif(crash_status = 1, -1, iif(clientele_id IS NULL AND record_date >= :today, 1, 0)) state
         FROM washing_machine
                  JOIN laundry_registry USING (washing_machine_id)
         WHERE building_id = :building_id
@@ -72,11 +70,11 @@ def get_building_id(conn, client_id):
 
 
 def get_client_id(conn, phone_num):
-    return pandas.read_sql('''
+    return int(pandas.read_sql('''
                 SELECT clientele_id
                 FROM clientele
                 WHERE phone_num = :phone_num
-            ''', conn, params={'phone_num': phone_num}).values[0][0]
+            ''', conn, params={'phone_num': phone_num}).values[0][0])
 
 
 def get_password(conn, client_id):
@@ -85,3 +83,40 @@ def get_password(conn, client_id):
                 FROM clientele
                 WHERE clientele_id = :client_id
             ''', conn, params={'client_id': client_id}).values[0][0]
+
+
+def is_laundry_registry_empty(conn):
+    return pandas.read_sql('''
+                    SELECT *
+                    FROM laundry_registry
+                    WHERE record_date = date(julianday('now'))
+                ''', conn).shape[0] == 0
+
+
+def fill_laundry_registry(conn):
+    cur = conn.cursor()
+
+    cur.executescript(f'''
+            WITH RECURSIVE generate_series(value) AS (SELECT 0
+                                          UNION ALL
+                                          SELECT value + 1
+                                          FROM generate_series
+                                          WHERE value + 1 <= 14)
+            INSERT
+            INTO laundry_registry (washing_machine_id, record_date, record_time)
+            SELECT washing_machine_id,
+                   date(julianday('now', 'weekday 0', '-6 days'), '+' || value || ' days'),
+                   record_time
+            FROM washing_machine,
+                 generate_series,
+                 record_range''')
+
+    return conn.commit()
+
+
+def is_correct_phone(conn, phone_num):
+    return pandas.read_sql('''
+                SELECT iif(phone_num = :phone_num, 1, 0)
+                FROM clientele
+                WHERE phone_num = :phone_num
+            ''', conn, params={'phone_num': phone_num}).values[0][0]

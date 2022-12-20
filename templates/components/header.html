@@ -1,27 +1,13 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="./static/css/style.css">
-    {% import "macros.html" as macros %}
-</head>
-{% block before_body %}
-{% endblock %}
-<body>
 <header>
     {% set client_name_parts = client_name.split() %}
-    <nav class="navbar px-10 py-5">
+    <nav class="navbar py-5">
         <div class="navbar-start">
             <a href="{{ url_for('index') }}" class="btn btn-outline btn-primary">СТИРАЛКА</a>
         </div>
         <div class="navbar-center">
-            <div class="font-bold">
-                {% block header_title %}
-                {% endblock %}
-            </div>
+            <div class="font-bold"><h1>{{ header_title }}</h1></div>
         </div>
-        <div class="navbar-end flex gap-2">
+        <div class="navbar-end flex justify-end gap-2">
             {% if client_name == '' %}
                 <label for="login-modal" class="btn btn-ghost btn-sm normal-case">Войти</label>
             {% else %}
@@ -31,7 +17,7 @@
                             <span>{{ client_name_parts[1][0] }}</span>
                         </div>
                     </div>
-                    <span class="ml-1">{{ client_name_parts[0] }} {{ client_name_parts[1][0] }}. {{ client_name_parts[2][0] }}.</span>
+                    <span class="ml-2">{{ client_name_parts[0] }} {{ client_name_parts[1][0] }}. {{ client_name_parts[2][0] }}.</span>
                 </a>
                 <form action="{{ url_for('auth') }}" method="post">
                     <button name="logout" value="logout" type="submit"
@@ -43,7 +29,3 @@
         </div>
     </nav>
 </header>
-{% block body %}
-{% endblock %}
-</body>
-</html>

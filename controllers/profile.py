@@ -18,7 +18,7 @@ def profile():
     profile_records = get_profile_records(conn, session['client_id'], today.strftime('%Y-%m-%d'))
 
     # выводим форму
-    html = render_template('profile.html',
+    html = render_template('pages/profile.html',
                            building_code=session['building_code'],
                            client_name=session['client_name'],
                            profile_records=profile_records,

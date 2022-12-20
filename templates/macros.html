@@ -1,7 +1,5 @@
-<!DOCTYPE html>
-
 {% macro render_record_block(machine_records, client_id, week_days, records) %}
-    <div class="carousel carousel-center">
+    <div class="carousel carousel-center gap-5">
         {% for machine_floor, values in machine_records.items() %}
             {{ render_record_card(machine_floor[0],
                 machine_floor[1],
@@ -34,17 +32,16 @@
             <thead>
             <tr>
                 <th></th>
-                <th colspan="7" class="text-sm">Этаж {{ floor_num }}</th>
-            </tr>
-            <tr>
-                <th></th>
-                <th colspan="7" class="text-sm">Машинка {{ machine_num }}</th>
+                <th colspan="7" class="font-bold text-sm">
+                    <p>Этаж {{ floor_num }}</p>
+                    <p>Машинка {{ machine_num }}</p>
+                </th>
             </tr>
             <tr>
                 {% set days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'] %}
                 <th></th>
                 {% for i in range(7) %}
-                    <th class="text-xs">
+                    <th class="font-medium text-xs">
                         <p class="week_day">{{ days[i] }}</p>
                         <p class="week_date">{{ week_days[i].strftime('%d.%m') }}</p>
                     </th>
@@ -54,37 +51,39 @@
             <tbody>
             {% for time, time_records in machine_records.items() %}
                 <tr>
-                    <td class="text-xs">
+                    <td class="font-medium text-xs">
                         <span class="hour">{{ time[0] + time[1] }}</span><sup
                             class="minutes">{{ time[3] + time[4] }}</sup>
                     </td>
                     {% for time_record_index in time_records %}
                         <td>
+
                             {% set time_record = records.iloc[time_record_index] %}
                             <input type="checkbox"
                                    value="{{ time_record.laundry_registry_id }}"
                                    id="{{ time_record.laundry_registry_id }}"
                                    name="record_cell"
                                    class="record_cell_input
-                                    {% if time_record.is_free == 1 %}
+                                    {% if time_record.state == 1 %}
                                    free
+                                    {% elif time_record.state == -1 %}
+                                   off
                                     {% else %}
                                    disabled
                                     {% endif %}
                                     {% if time_record.clientele_id == client_id %}
                                    booked
                                     {% endif %}"
-                                    {% if time_record.clientele_id == client_id %}
+                                    {% if time_record.clientele_id == client_id and time_record.state != -1 %}
                                    checked
                                     {% endif %}
-                                    {% if time_record.is_free == 0 %}
+                                    {% if time_record.state != 1 %}
                                    disabled
                                     {% endif %}
                             >
-                            {% if time_record.clientele_id == client_id %}
-                                <a href="#delete-modal">
-                                    <label for="{{ time_record.laundry_registry_id }}" class="record_cell"></label>
-                                </a>
+                            {% if time_record.clientele_id == client_id and time_record.state != -1 %}
+                                <a href="#delete-modal" class="record_cell" id="{{ time_record.laundry_registry_id }}"
+                                   onclick="document.querySelector('#delete-modal button').value = this.id"></a>
                             {% else %}
                                 <label for="{{ time_record.laundry_registry_id }}" class="record_cell"></label>
                             {% endif %}

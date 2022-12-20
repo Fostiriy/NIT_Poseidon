@@ -1,0 +1,66 @@
+{% extends "pages/base.html" %}
+{% set header_title = client_name + ' | Корпус ' + building_code %}
+{% block title %}
+    Мои записи
+{% endblock %}
+{% block before_body %}
+    <div class="modal" id="delete-modal">
+        <div class="modal-box w-2/12">
+            <a href="#" class="btn btn-ghost btn-sm btn-square absolute right-2 top-2">✕</a>
+            <h3 class="font-bold text-lg text-center">Удалить запись?</h3>
+            <form action="{{ url_for('index') }}" class="modal-action flex justify-center">
+                <button class="btn btn-outline btn-error normal-case" name="record_cell_to_delete">Удалить</button>
+                <a href="#" class="btn btn-outline normal-case">Оставить</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block body %}
+    <main>
+        {% if profile_records.shape[0] == 0 %}
+            <p class="text-lg">У вас ещё нет записей</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Записаться на стирку</a>
+        {% else %}
+            <h2 class="font-bold text-2xl mb-5">Мои записи</h2>
+            {% set columns = {'record_date':'Дата', 'record_time':'Время', 'floor_num':'Этаж', 'washing_machine_id':'Машинка', 'state':'Статус'} %}
+            <table class="table">
+                <thead>
+                <tr>
+                    {% for name in columns %}
+                        <th>{{ columns[name] }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for i, record in profile_records.iterrows() %}
+                    <tr>
+                        {% for name in columns %}
+                            <td>
+                                {% set value = record[name] %}
+                                {% if name == 'state' %}
+                                    {% if value == 1 %}
+                                        <span class="text-success">Активно</span>
+                                        <a href="#delete-modal"
+                                           class="btn btn-outline btn-error normal-case btn-xs"
+                                           id="{{ record.laundry_registry_id }}"
+                                           onclick="document.querySelector('#delete-modal button').value = this.id">
+                                            Отменить
+                                        </a>
+                                    {% elif value == -1 %}
+                                        <span class="text-error">Недоступно</span>
+                                    {% else %}
+                                        Прошло
+                                    {% endif %}
+                                {% else %}
+                                    {{ record[name] }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ url_for('index') }}" class="btn btn-primary btn-outline mt-5">Записаться на стирку</a>
+        {% endif %}
+    </main>
+{% endblock %}
