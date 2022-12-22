@@ -58,6 +58,9 @@
 
 .record_cell_input.booked + .record_cell::before {
     background-color: hsl(var(--su)) !important;
+}
+
+a.record_cell::before {
     cursor: pointer !important;
 }
 

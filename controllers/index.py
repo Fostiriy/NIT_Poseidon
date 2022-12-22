@@ -31,6 +31,7 @@ def index():
     if is_laundry_registry_empty(conn):
         fill_laundry_registry(conn)
 
+    # Первый вход
     if 'client_id' not in session:
         html = render_template('pages/hello.html',
                                client_name='',
@@ -38,6 +39,7 @@ def index():
                                phone='',
                                phone_error=False,
                                password_error=False)
+    # Вывод журнала записи
     else:
         today = datetime.now()
         timezone = pytz.timezone('Asia/Vladivostok')

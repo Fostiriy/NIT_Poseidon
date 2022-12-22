@@ -17,7 +17,7 @@ def get_records(conn, building_id, today, start_date, finish_date):
                record_time,
                record_date,
                clientele_id,
-               iif(crash_status = 1, -1, iif(clientele_id IS NULL AND record_date >= :today, 1, 0)) state
+               iif(crash_status = 1, -1, iif(clientele_id IS NULL AND record_date >= :today, 1, iif(clientele_id IS NOT NULL AND record_date >= :today, 2, 0))) state
         FROM washing_machine
                  JOIN laundry_registry USING (washing_machine_id)
         WHERE building_id = :building_id

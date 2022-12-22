@@ -81,7 +81,7 @@
                                    disabled
                                     {% endif %}
                             >
-                            {% if time_record.clientele_id == client_id and time_record.state != -1 %}
+                            {% if time_record.clientele_id == client_id and time_record.state == 2 %}
                                 <a href="#delete-modal" class="record_cell" id="{{ time_record.laundry_registry_id }}"
                                    onclick="document.querySelector('#delete-modal button').value = this.id"></a>
                             {% else %}
