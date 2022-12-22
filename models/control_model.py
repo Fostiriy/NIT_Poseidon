@@ -6,7 +6,7 @@ def get_washing_machine_info(conn):
         WITH active_machines(washing_machine_id, is_active) AS (SELECT washing_machine_id, 1
                                                                 FROM crash_registry
                                                                 WHERE crash_date is null)
-        SELECT washing_machine_id,
+        SELECT DISTINCT washing_machine_id,
                building_code,
                floor_num,
                iif(is_active = 1, 1, 0)                                                          AS state,
